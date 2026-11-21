@@ -1,0 +1,54 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+const int motor = 7;
+const int red = 9;
+const int green = 8;
+const int soil = A0;
+
+void setup(){
+    Serial.begin(9600);
+    pinMode(red,OUTPUT);
+    pinMode(green,OUTPUT);
+    pinMode(motor,OUTPUT);
+    lcd.init();
+    lcd.backlight();
+    lcd.setCursor(0,0);
+    lcd.print("Automatic");
+    lcd.setCursor(0,1);
+    lcd.print("IrrigationSystem");
+    delay(3000);
+    lcd.clear();
+}
+
+void loop(){
+    int value = analogRead(soil);
+    Serial.println(value);
+
+    if(value<350){
+        lcd.clear();
+        digitalWrite(green,HIGH);
+        digitalWrite(red,LOW);
+        digitalWrite(motor,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("Moisture: ");
+        lcd.setCursor(10,0);
+        lcd.print(value);
+        lcd.setCursor(0,1);
+        lcd.print("Motor: ON ");
+    }
+    else{
+        lcd.clear();
+        digitalWrite(green,LOW);
+        digitalWrite(red,HIGH);
+        digitalWrite(motor,LOW);
+        lcd.setCursor(0,0);
+        lcd.print("Moisture: ");
+        lcd.setCursor(10,0);
+        lcd.print(value);
+        lcd.setCursor(0,1);
+        lcd.print("Motor: OFF");
+    }
+    delay(1000);
+}
